@@ -1,3 +1,10 @@
+"""Plot Tannana River breakup dates over time.
+
+Data from: https://nsidc.org/data/nsidc-0064/versions/2
+
+Assumes user has downloaded the `NenanaIceClassic_1917-2026.csv` and placed it
+into ../data/.
+"""
 from pathlib import Path
 
 import pandas as pd
