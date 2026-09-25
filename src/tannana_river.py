@@ -15,8 +15,10 @@ if __name__ == "__main__":
     x = df.Year.values.reshape((-1, 1))
     y = df["Decimal Day of Year"].values
     model = LinearRegression().fit(x, y)
-    print(f"Model R2: {model.score(x, y)}")
-    print(f"Model slope: {model.coef_[0]}")
+    model_score = model.score(x, y)
+    model_slope = model.coef_[0]
+    print(f"Model R²: {model_score}")
+    print(f"Model slope: {model_slope}")
 
     min_year = int(min(x)[0])
     max_year = max(x)[0]
@@ -24,30 +26,29 @@ if __name__ == "__main__":
     lin_x = np.array([min_year, max_year])
     lin_y = model.predict(lin_x.reshape((-1, 1)))
 
+    plt.figure(figsize=(12, 10))
+
     # Show  scatterplot of the entire timeseries
-    df.plot.scatter(x="Year", y="Decimal Day of Year", c='black')
-    plt.plot(lin_x, lin_y, 'b-')
+    ax = df.plot.scatter(x="Year", y="Decimal Day of Year", c='black')
+
+    plt.plot(lin_x, lin_y, 'b-', label=f"Linear regression (R²: {model_score:.3f}; Slope: {model_slope:.3f})")
 
     # Now compute a regression for the 50 years since NSIDC was founded
     x = df[df.Year >= 1976].Year.values.reshape((-1, 1))
     y = df[df.Year >= 1976]["Decimal Day of Year"].values
     model = LinearRegression().fit(x, y)
-    print(f"Model R2 (1976-2026): {model.score(x, y)}")
-    print(f"Model slope (1976-2026): {model.coef_[0]}")
+    model_score = model.score(x, y)
+    model_slope = model.coef_[0]
+    print(f"Model R² (1976-2026): {model_score}")
+    print(f"Model slope (1976-2026): {model_slope}")
 
     lin_x_50years = np.array([1976, 2026])
     lin_y_50years = model.predict(lin_x.reshape((-1, 1)))
 
-    plt.plot(lin_x_50years, lin_y_50years, 'g-')
+    plt.plot(lin_x_50years, lin_y_50years, 'g-', label=f"Linear regression 1976-2026 (R²: {model_score:.3f}; Slope: {model_slope:.3f})")
 
-    plt.axvline(x=1976, color="gold", label="1976")
+    plt.axvline(x=1976, color="gold")
     plt.title(f"Tanana river breakup dates {min_year}-{max_year}")
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15))
     plt.tight_layout()
     plt.savefig(THIS_DIR / "../plots/tannana_river_full_ts.png")
-
-
-
-    # Filter to just the last 50 years
-    # df[df.Year >= 1976].plot.scatter(x="Year", y="Decimal Day of Year")
-
-    # breakpoint()
